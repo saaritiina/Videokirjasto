@@ -1,2 +1,2 @@
 # Videokirjasto
-Web-ohjelmoinnin opintojaksolla itsenäisesti toteutettu tietokantaa käyttävä web-sovellus.
+Tietokannat ja web-ohjelmointi -opintojaksolla itsenäisesti toteutettu tietokantaa käyttävä web-sovellus.
