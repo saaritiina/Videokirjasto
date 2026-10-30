@@ -3,6 +3,7 @@ Tietokannat ja web-ohjelmointi -opintojaksolla itsenäisesti toteutettu
 tietokantaa käyttävä web-sovellus.
 
 Tarkempi kuvaus:
+
 Videokirjastosovellukseen pystyy lisäämään haluamiaan videoita 
 (pääasiallinen tietokohde), joihin voi littää lisätietoa 
 (toissijainen tietokohde). Sovelluksessa on seuraavat toiminnot:
