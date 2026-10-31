@@ -22,5 +22,5 @@ tilastoa mm. lisättyjen videoiden määrästä ja prosentuaalinen kuvaus siitä
 kuinka paljon mitäkin luonnehdintaluokkaa käyttäjän lisäämät videot ovat 
 edustaneet.
 
-Ajatuksena olisi pystyä lataamaan lähtökohtaisesti Youtubesta löytyviä videoita,
+Ajatuksena olisi pystyä lataamaan lähtökohtaisesti Youtubesta löytyviä videoita.
 Jossei tätä saada toimimaan, videot lisätään omasta tietovarastosta.
