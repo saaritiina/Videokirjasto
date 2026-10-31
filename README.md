@@ -24,3 +24,6 @@ edustaneet.
 
 Ajatuksena olisi pystyä lataamaan lähtökohtaisesti Youtubesta löytyviä videoita.
 Jossei tätä saada toimimaan, videot lisätään omasta tietovarastosta.
+
+© 2026 Tiina Saari. Kaikki oikeudet pidätetään. Koodi on julkaistu ainoastaan
+tarkastelua varten.
