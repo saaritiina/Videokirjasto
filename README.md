@@ -14,7 +14,7 @@ muiden lisäämiä videoita tai lisätietoja.
 - Käyttäjä näkee omien videoidensa ja lisäämiensä lisätietojen lisäksi muiden 
 lisäämät videot ja lisätiedot.
 - Video voi kuulua yhteen tai useampaan luonnehdintaluokkaan, joka kuvaa videon 
-sisältöä esim. lapset, musiikki, kiipeily.
+sisältöä esim. lapsille sopivat, musiikki, kiipeily.
 - Käyttäjä pystyy hakemaan hakusanalla videoita tai suodattamaan videoita 
 luonnehdintaluokkien mukaan.
 - Sovelluksessa on sivusto, jossa näkyy käyttäjäkohtaisesti lisätyt videot ja 
