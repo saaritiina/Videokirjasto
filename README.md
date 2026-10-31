@@ -5,7 +5,7 @@ tietokantaa käyttävä web-sovellus.
 Tarkempi kuvaus:
 
 Videokirjastosovellukseen pystyy lisäämään haluamiaan videoita 
-(pääasiallinen tietokohde), joihin voi littää lisätietoa 
+(pääasiallinen tietokohde), joihin voi liittää lisätietoa 
 (toissijainen tietokohde). Sovelluksessa on seuraavat toiminnot:
 - Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
 - Käyttäjä pystyy lisäämään sekä muokkaamaan ja poistamaan lisäämiään videoita.
@@ -21,3 +21,6 @@ luonnehdintaluokkien mukaan.
 tilastoa mm. lisättyjen videoiden määrästä ja prosentuaalinen kuvaus siitä, 
 kuinka paljon mitäkin luonnehdintaluokkaa käyttäjän lisäämät videot ovat 
 edustaneet.
+
+Ajatuksena olisi pystyä lataamaan lähtökohtaisesti Youtubesta löytyviä videoita,
+Jossei tätä saada toimimaan, videot lisätään omasta tietovarastosta.
