@@ -4,26 +4,26 @@ tietokantaa käyttävä web-sovellus.
 
 Tarkempi kuvaus:
 
-Videokirjastosovellukseen pystyy lisäämään haluamiaan videoita 
-(pääasiallinen tietokohde), joihin voi liittää lisätietoa 
-(toissijainen tietokohde). Sovelluksessa on seuraavat toiminnot:
+Videokirjastosovellukseen pystyy lisäämään YouTube-videon linkin (pääasiallinen 
+tietokohde) ja haluamansa nimen videolinkille. Käyttäjät voivat lisätä kommentin 
+(toissijainen tietokohde) muiden käyttäjien lisäämiin videolinkkeihin. 
+Sovelluksessa on seuraavat toiminnot:
 - Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
-- Käyttäjä pystyy lisäämään sekä muokkaamaan ja poistamaan lisäämiään videoita.
-- Käyttäjä voi lisätä myös muiden videoihin lisätietoja, mutta ei voi poistaa 
-muiden lisäämiä videoita tai lisätietoja.
-- Käyttäjä näkee omien videoidensa ja lisäämiensä lisätietojen lisäksi muiden 
-lisäämät videot ja lisätiedot.
-- Video voi kuulua yhteen tai useampaan luonnehdintaluokkaan, joka kuvaa videon 
-sisältöä esim. lapsille sopivat, musiikki, kiipeily.
-- Käyttäjä pystyy hakemaan hakusanalla videoita tai suodattamaan videoita 
+- Käyttäjä pystyy lisäämään, muokkaamaan ja poistamaan lisäämiään 
+videolinkkien tietoja.
+- Käyttäjä voi lisätä kommentin myös muiden lisäämiin videolinkkeihin, 
+mutta ei voi poistaa muiden lisäämiä pääasiallisia tai toissijaisia tietokohteita.
+- Käyttäjä näkee omien videolinkkiensä ja lisäämiensä kommenttien lisäksi muiden 
+lisäämät videolinkit ja kommentit.
+- Videolinkki voi kuulua yhteen tai useampaan luonnehdintaluokkaan, joka kuvaa 
+videon sisältöä esim. lapsille sopivat, musiikki, kiipeily. Käyttäjä valitsee
+itse luokat videolinkille.
+- Käyttäjä pystyy hakemaan videolinkkejä hakusanalla tai suodattamaan niitä 
 luonnehdintaluokkien mukaan.
-- Sovelluksessa on sivusto, jossa näkyy käyttäjäkohtaisesti lisätyt videot ja 
-tilastoa mm. lisättyjen videoiden määrästä ja prosentuaalinen kuvaus siitä, 
-kuinka paljon mitäkin luonnehdintaluokkaa käyttäjän lisäämät videot ovat 
+- Sovelluksessa on sivusto, jossa näkyy käyttäjien lisäämät videolinkit 
+ja tilastoa mm. lisättyjen linkkien määrästä ja prosentuaalinen kuvaus siitä, 
+kuinka paljon mitäkin luonnehdintaluokkaa käyttäjän lisäämät linkit ovat 
 edustaneet.
-
-Ajatuksena olisi pystyä lataamaan lähtökohtaisesti Youtubesta löytyviä videoita.
-Jossei tätä saada toimimaan, videot lisätään omasta tietovarastosta.
 
 © 2026 Tiina Saari. Kaikki oikeudet pidätetään. Koodi on julkaistu ainoastaan
 tarkastelua varten.
