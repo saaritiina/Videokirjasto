@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Kaikki videolinkit:</title>
+</head>
+<body>
+    {% include "navigation.html" %}
+    <h1>Kaikki videolinkit:</h1>
+
+    {% for link in links %}
+    <h3>{{ link["title"] }}</h3>
+    <p>
+        <a href="{{ link['youtube_url'] }}" target="_blank">
+            {{ link["youtube_url"] }}
+        </a>
+    </p>
+    <p>
+        Lisännyt: {{ link["username"] }}
+    </p>
+    <hr>
+    {% endfor %}
+</body>
+</html>

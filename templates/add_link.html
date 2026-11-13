@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Lisää videolinkki</title>
+</head>
+<body>
+    {% include "navigation.html" %}
+    <h1>Lisää videolinkki:</h1>
+
+    <form action="/add_link" method="post">
+        <p>
+            <label for="title">Videon nimi:</label><br>
+            <input 
+                type="text"
+                name="title" 
+                maxlength="300" 
+                placeholder="Esim. Python tutorial"
+                required>
+        </p>
+
+        <p>
+            <label for="youtube_url">YouTube-linkki:</label><br>
+            <input
+                type="url"
+                name="youtube_url"
+                placeholder="Esim. https://www.youtube.com/..."
+                required>
+        </p>
+
+        <button type="submit">Lisää linkki</button>
+    </form>
+</body>
+</html>
