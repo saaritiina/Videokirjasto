@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Etusivu</title>
+</head>
+<body>
+    {% include "navigation.html" %}
+    <h1>Etusivu</h1>
+    
+    {% if session.username %}
+
+    <p>
+        Olet kirjautunut sisään nimellä
+        <strong>{{ session.username }}</strong>.
+    </p>
+
+    {% else %}
+
+    <p>Rekisteröidy tai kirjaudu sisään:</p>
+
+    <p>
+        <button onclick="location.href='/register'">
+            Rekisteröidy
+        </button>
+    </p>
+    <p>
+        <button onclick="location.href='/login'">
+            Kirjaudu sisään
+        </button>
+    </p>
+    {% endif %}
+</body>
+</html>
