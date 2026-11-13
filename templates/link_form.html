@@ -2,20 +2,21 @@
 <html>
 
 <head>
-  <title>Lisää videolinkki</title>
+  <title>{{ heading }}</title>
 </head>
 <body>
     {% include "navigation.html" %}
-    <h1>Lisää videolinkki:</h1>
+    <h1>{{ heading }}</h1>
 
-    <form action="/add_link" method="post">
+    <form action="{{ form_action }}" method="post">
         <p>
             <label for="title">Videon nimi:</label><br>
-            <input 
+            <input
                 type="text"
-                name="title" 
-                maxlength="300" 
-                placeholder="Esim. Python tutorial"
+                id="title"
+                name="title"
+                maxlength="300"
+                value="{{ title }}"
                 required>
         </p>
 
@@ -23,12 +24,13 @@
             <label for="youtube_url">YouTube-linkki:</label><br>
             <input
                 type="url"
+                id="youtube_url"
                 name="youtube_url"
-                placeholder="Esim. https://www.youtube.com/..."
+                value="{{ youtube_url }}"
                 required>
         </p>
 
-        <button type="submit">Lisää linkki</button>
+        <button type="submit">{{ button_text }}</button>
     </form>
 </body>
 </html>

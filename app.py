@@ -76,12 +76,18 @@ def logout():
 
 @app.route("/add_link", methods= ["GET", "POST"])
 def add_link():
-    # If user is no longer logged in they will be redirected to login
+    # If user is no longer logged in they will be redirected to login page
     if "user_id" not in session:
         return redirect("/login")
 
     if request.method == "GET":
-        return render_template("add_link.html")
+        return render_template(
+            "link_form.html",
+            heading="Lisää videolinkki",
+            form_action="/add_link",
+            title="",
+            youtube_url="",
+            button_text="Lisää linkki")
     
     title = request.form["title"]
     youtube_url = request.form["youtube_url"]
@@ -100,6 +106,92 @@ def add_link():
 
     return redirect("/links")
 
+@app.route("/edit_link/<int:link_id>", methods=["GET", "POST"])
+def edit_link(link_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    # It is only allowed to edit the links that you have added.
+    # Search for the links that has the same user_id that is logged in.
+    result = db.query(
+        """
+        SELECT id, title, youtube_url
+        FROM video_links
+        WHERE id = ? AND user_id = ?
+        """,
+        [link_id, session["user_id"]]
+    )
+
+    if not result:
+        return redirect("/links")
+
+    link = result[0]
+
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        youtube_url = request.form.get("youtube_url", "").strip()
+
+        db.execute(
+            """
+            UPDATE video_links
+            SET title = ?, youtube_url = ?
+            WHERE id = ? AND user_id = ?
+            """,
+            [title, youtube_url, link_id, session["user_id"]]
+        )
+
+        return redirect("/links")
+
+    return render_template(
+        "link_form.html",
+        heading="Muokkaa videolinkkiä",
+        form_action=f"/edit_link/{link_id}",
+        title=link["title"],
+        youtube_url=link["youtube_url"],
+        button_text="Tallenna muutokset"
+    )
+
+@app.route("/link/<int:link_id>")
+def link_detail(link_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    result = db.query(
+        """
+        SELECT
+            v.id,
+            v.user_id,
+            v.title,
+            v.youtube_url,
+            u.username
+        FROM video_links v
+        JOIN users u ON v.user_id = u.id
+        WHERE v.id = ?
+        """,
+        [link_id]
+    )
+
+    # Tähän virheilmoitus jossei löydy
+
+    return render_template("link_page.html", link=result[0])
+
+
+@app.route("/delete_link/<int:link_id>", methods=["POST"])
+def delete_link(link_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    db.execute(
+        """
+        DELETE FROM video_links
+        WHERE id = ? AND user_id = ?
+        """,
+        [link_id, session["user_id"]]
+    )
+
+    return redirect("/links")
+
+
 @app.route("/links")
 def links():
     # Users cannot see added links if they are not logged in.
@@ -108,6 +200,8 @@ def links():
     
     sql = """
     SELECT
+        v.id,
+        v.user_id,
         v.title,
         v.youtube_url,
         u.username

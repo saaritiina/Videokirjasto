@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ link["title"] }}</title>
+</head>
+<body>
+    {% include "navigation.html" %}
+
+    <h1>{{ link["title"] }}</h1>
+
+    <p>
+        <a
+            href="{{ link['youtube_url'] }}"
+            target="_blank"
+            rel="noopener noreferrer">
+            {{ link["youtube_url"] }}
+        </a>
+    </p>
+
+    <p>Lisännyt: {{ link["username"] }}</p>
+
+    {% if link["user_id"] == session.get("user_id") %}
+        <p>
+            <a class="button" href="/edit_link/{{ link['id'] }}">Muokkaa</a>
+        </p>
+
+        <form
+            action="/delete_link/{{ link['id'] }}"
+            method="post"
+            onsubmit="return confirm('Haluatko varmasti poistaa tämän linkin?');">
+            <button type="submit">Poista</button>
+        </form>
+    {% endif %}
+
+    <p>
+        <a class="button" href="/links">Takaisin videolinkkeihin</a>
+    </p>
+</body>
+</html>
