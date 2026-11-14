@@ -315,3 +315,18 @@ def new_comment():
         )
 
     return redirect("/link/" + str(video_link_id))
+
+@app.route("/delete_comment/<int:comment_id>", methods=["POST"])
+def delete_comment(comment_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    video_link_id = comments.remove_comment(
+        comment_id,
+        session["user_id"]
+    )
+
+    if video_link_id is None:
+        abort(404)
+
+    return redirect("/link/" + str(video_link_id))

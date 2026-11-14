@@ -21,3 +21,25 @@ def add_comment(content, user_id, video_link_id):
     VALUES (?, datetime('now'), ?, ?)
     """
     db.execute(sql, [content, user_id, video_link_id])
+
+def remove_comment(comment_id, user_id):
+    result = db.query(
+        """
+        SELECT video_link_id
+        FROM comments
+        WHERE id = ? AND user_id = ?
+        """,
+        [comment_id, user_id]
+    )
+
+    if not result:
+        return None
+
+    video_link_id = result[0]["video_link_id"]
+
+    db.execute(
+        "DELETE FROM comments WHERE id = ? AND user_id = ?",
+        [comment_id, user_id]
+    )
+
+    return video_link_id

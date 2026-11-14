@@ -65,14 +65,21 @@
     </form>
 
     {% for comment in comments %}
-        <article>
-            <p>{{ comment["username"] }} ({{ comment["sent_at"] }}):</p>
-            <p>{{ comment["content"] }}</p>
-        </article>
-        <hr>
-    {% else %}
-        <p>Ei vielä kommentteja.</p>
-    {% endfor %}
+    <p>{{ comment["username"] }} ({{ comment["sent_at"] }}):</p>
+    <p>{{ comment["content"] }}</p>
+
+    {% if comment["user_id"] == session.get("user_id") %}
+        <form
+            action="/delete_comment/{{ comment['id'] }}"
+            method="post"
+            onsubmit="return confirm('Haluatko varmasti poistaa kommentin?');">
+            <button type="submit">Poista kommentti</button>
+        </form>
+    {% endif %}
+    <hr>
+{% else %}
+    <p>Ei vielä kommentteja.</p>
+{% endfor %}
 
     <p>
         <a class="button" href="/links">Takaisin videolinkkeihin</a>
