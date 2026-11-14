@@ -17,6 +17,7 @@
                 name="title"
                 maxlength="300"
                 value="{{ title }}"
+                placeholder="Esim. Twinkle twinkle little star"
                 required>
         </p>
 
@@ -27,7 +28,33 @@
                 id="youtube_url"
                 name="youtube_url"
                 value="{{ youtube_url }}"
+                placeholder="https://www.youtube.com/"
                 required>
+        </p>
+        <p><strong>Valitse luokat:</strong></p>
+
+        {% for class in classes %}
+            <label>
+                <input
+                    type="checkbox"
+                    name="class_ids"
+                    value="{{ class['id'] }}"
+                    {% if class['id'] in selected_class_ids %}checked{% endif %}>
+                {{ class["name"] }}
+            </label><br>
+        {% else %}
+            <p>Luokkia ei ole vielä lisätty.</p>
+        {% endfor %}
+
+        <p>
+            <label for="new_classes">Lisää uusia luokkia:</label><br>
+            <input
+                type="text"
+                id="new_classes"
+                name="new_classes"
+                placeholder="Esim. Musiikki">
+            <br>
+            <small>Voit kirjoittaa useita luokkia pilkulla erotettuna.</small>
         </p>
 
         <button type="submit">{{ button_text }}</button>

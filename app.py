@@ -1,11 +1,67 @@
 import sqlite3
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, abort, redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import config
 import db
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+# Utility functions start here:
+
+def get_classes():
+    return db.query("SELECT id, name FROM classes ORDER BY name")
+
+def save_link_classes(link_id):
+    # Delete the classes that video may already have
+    db.execute(
+        "DELETE FROM video_link_classes WHERE video_link_id = ?",
+        [link_id]
+    )
+    # Save the classes that already exists.
+    existing_classes = get_classes()
+    valid_ids = {int(item["id"]) for item in existing_classes}
+
+    for class_id in request.form.getlist("class_ids"):
+        try:
+            class_id = int(class_id)
+        except ValueError:
+            continue
+
+        if class_id in valid_ids:
+            db.execute(
+                """
+                INSERT OR IGNORE INTO video_link_classes
+                    (video_link_id, class_id)
+                VALUES (?, ?)
+                """,
+                [link_id, class_id]
+            )
+    # Save new classes. There may be multiple classes separated with comma. 
+    new_names = request.form.get("new_classes", "")
+    names = {name.strip() for name in new_names.split(",") if name.strip()}
+
+    for name in names:
+        db.execute(
+            "INSERT OR IGNORE INTO classes (name) VALUES (?)",
+            [name]
+        )
+
+        result = db.query(
+            "SELECT id FROM classes WHERE name = ?",
+            [name]
+        )
+
+        if result:
+            db.execute(
+                """
+                INSERT OR IGNORE INTO video_link_classes
+                    (video_link_id, class_id)
+                VALUES (?, ?)
+                """,
+                [link_id, result[0]["id"]]
+            )
+# End of utility functions
 
 @app.route("/")
 def index():
@@ -87,22 +143,23 @@ def add_link():
             form_action="/add_link",
             title="",
             youtube_url="",
+            classes= get_classes(),
+            selected_class_ids=[],
             button_text="Lisää linkki")
     
-    title = request.form["title"]
-    youtube_url = request.form["youtube_url"]
-
-    sql = """
-    INSERT INTO video_links
-        (title, youtube_url, user_id)
-    VALUES
-        (?, ?, ?)
-    """
-
+    title = request.form["title"].strip()
+    youtube_url = request.form["youtube_url"].strip()
+    
     db.execute(
-        sql,
+        """
+        INSERT INTO video_links (title, youtube_url, user_id)
+        VALUES (?, ?, ?)
+        """,
         [title, youtube_url, session["user_id"]]
     )
+
+    link_id= db.last_insert_id()
+    save_link_classes(link_id)
 
     return redirect("/links")
 
@@ -128,8 +185,8 @@ def edit_link(link_id):
     link = result[0]
 
     if request.method == "POST":
-        title = request.form.get("title", "").strip()
-        youtube_url = request.form.get("youtube_url", "").strip()
+        title = request.form["title"].strip()
+        youtube_url = request.form["youtube_url"].strip()
 
         db.execute(
             """
@@ -140,7 +197,17 @@ def edit_link(link_id):
             [title, youtube_url, link_id, session["user_id"]]
         )
 
+        save_link_classes(link_id)
         return redirect("/links")
+
+    selected = db.query(
+        """
+        SELECT class_id
+        FROM video_link_classes
+        WHERE video_link_id = ?
+        """,
+        [link_id]
+    )
 
     return render_template(
         "link_form.html",
@@ -148,6 +215,8 @@ def edit_link(link_id):
         form_action=f"/edit_link/{link_id}",
         title=link["title"],
         youtube_url=link["youtube_url"],
+        classes=get_classes(),
+        selected_class_ids=[int(item["class_id"]) for item in selected],
         button_text="Tallenna muutokset"
     )
 
@@ -171,10 +240,25 @@ def link_detail(link_id):
         [link_id]
     )
 
-    # Tähän virheilmoitus jossei löydy
+    if not result:
+        abort(404)
 
-    return render_template("link_page.html", link=result[0])
+    classes = db.query(
+        """
+        SELECT c.name
+        FROM classes c
+        JOIN video_link_classes vlc ON vlc.class_id = c.id
+        WHERE vlc.video_link_id = ?
+        ORDER BY c.name
+        """,
+        [link_id]
+    )
 
+    return render_template(
+        "link_page.html",
+        link=result[0],
+        classes=classes
+    )
 
 @app.route("/delete_link/<int:link_id>", methods=["POST"])
 def delete_link(link_id):

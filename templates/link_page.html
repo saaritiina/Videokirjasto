@@ -31,7 +31,16 @@
             <button type="submit">Poista</button>
         </form>
     {% endif %}
-
+    {% if classes %}
+        <p>
+            Luokat:
+            {% for item in classes %}
+                {{ item["name"] }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+    {% else %}
+        <p>Linkille ei ole lisätty luokkia.</p>
+    {% endif %}
     <p>
         <a class="button" href="/links">Takaisin videolinkkeihin</a>
     </p>
