@@ -4,64 +4,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import config
 import db
 
+import comments
+import videos
+
 app = Flask(__name__)
 app.secret_key = config.secret_key
-
-# Utility functions start here:
-
-def get_classes():
-    return db.query("SELECT id, name FROM classes ORDER BY name")
-
-def save_link_classes(link_id):
-    # Delete the classes that video may already have
-    db.execute(
-        "DELETE FROM video_link_classes WHERE video_link_id = ?",
-        [link_id]
-    )
-    # Save the classes that already exists.
-    existing_classes = get_classes()
-    valid_ids = {int(item["id"]) for item in existing_classes}
-
-    for class_id in request.form.getlist("class_ids"):
-        try:
-            class_id = int(class_id)
-        except ValueError:
-            continue
-
-        if class_id in valid_ids:
-            db.execute(
-                """
-                INSERT OR IGNORE INTO video_link_classes
-                    (video_link_id, class_id)
-                VALUES (?, ?)
-                """,
-                [link_id, class_id]
-            )
-    # Save new classes. There may be multiple classes separated with comma. 
-    new_names = request.form.get("new_classes", "")
-    names = {name.strip() for name in new_names.split(",") if name.strip()}
-
-    for name in names:
-        db.execute(
-            "INSERT OR IGNORE INTO classes (name) VALUES (?)",
-            [name]
-        )
-
-        result = db.query(
-            "SELECT id FROM classes WHERE name = ?",
-            [name]
-        )
-
-        if result:
-            db.execute(
-                """
-                INSERT OR IGNORE INTO video_link_classes
-                    (video_link_id, class_id)
-                VALUES (?, ?)
-                """,
-                [link_id, result[0]["id"]]
-            )
-# End of utility functions
 
 @app.route("/")
 def index():
@@ -74,9 +21,24 @@ def register():
 
 @app.route("/create", methods=["POST"])
 def create():
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
+    username = request.form.get("username", "").strip()
+    password1 = request.form.get("password1", "")
+    password2 = request.form.get("password2", "")
+
+    if not username:
+        return render_template(
+            "message.html",
+            message="Käyttäjätunnus ei voi olla tyhjä.",
+            back_url="/register"
+        )
+    
+    if not password1.strip():
+        return render_template(
+            "message.html",
+            message="Salasana ei voi olla tyhjä.",
+            back_url="/register"
+        )
+    
     if password1 != password2:
         return render_template(
             "message.html",
@@ -87,8 +49,10 @@ def create():
     password_hash = generate_password_hash(password1)
 
     try:
-        sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
-        db.execute(sql, [username, password_hash])
+        db.execute(
+            "INSERT INTO users (username, password_hash) VALUES (?, ?)",
+            [username, password_hash]
+        )
     except sqlite3.IntegrityError:
         return render_template(
             "message.html",
@@ -143,7 +107,7 @@ def add_link():
             form_action="/add_link",
             title="",
             youtube_url="",
-            classes= get_classes(),
+            classes= videos.get_classes(),
             selected_class_ids=[],
             button_text="Lisää linkki")
     
@@ -159,7 +123,7 @@ def add_link():
     )
 
     link_id= db.last_insert_id()
-    save_link_classes(link_id)
+    videos.save_link_classes(link_id)
 
     return redirect("/links")
 
@@ -197,7 +161,7 @@ def edit_link(link_id):
             [title, youtube_url, link_id, session["user_id"]]
         )
 
-        save_link_classes(link_id)
+        videos.save_link_classes(link_id)
         return redirect("/links")
 
     selected = db.query(
@@ -215,7 +179,7 @@ def edit_link(link_id):
         form_action=f"/edit_link/{link_id}",
         title=link["title"],
         youtube_url=link["youtube_url"],
-        classes=get_classes(),
+        classes=videos.get_classes(),
         selected_class_ids=[int(item["class_id"]) for item in selected],
         button_text="Tallenna muutokset"
     )
@@ -254,10 +218,13 @@ def link_detail(link_id):
         [link_id]
     )
 
+    comment_list = comments.get_comments(link_id)
+
     return render_template(
         "link_page.html",
         link=result[0],
-        classes=classes
+        classes=classes,
+        comments=comment_list
     )
 
 @app.route("/delete_link/<int:link_id>", methods=["POST"])
@@ -278,10 +245,11 @@ def delete_link(link_id):
 
 @app.route("/links")
 def links():
-    # Users cannot see added links if they are not logged in.
     if "user_id" not in session:
         return redirect("/login")
-    
+
+    query = request.args.get("query", "").strip()
+
     sql = """
     SELECT
         v.id,
@@ -291,12 +259,59 @@ def links():
         u.username
     FROM video_links v
     JOIN users u ON v.user_id = u.id
-    ORDER BY v.id DESC
     """
 
-    links = db.query(sql)
+    if query:
+        pattern = "%" + query + "%"
+        sql += """
+        WHERE v.title LIKE ?
+           OR v.youtube_url LIKE ?
+           OR EXISTS (
+                SELECT 1
+                FROM video_link_classes vlc
+                JOIN classes c ON c.id = vlc.class_id
+                WHERE vlc.video_link_id = v.id
+                  AND c.name LIKE ?
+           )
+        """
+        params = [pattern, pattern, pattern]
+    else:
+        params = []
+
+    sql += " ORDER BY v.id DESC"
+
+    links = db.query(sql, params)
 
     return render_template(
         "links.html",
-        links=links
+        links=links,
+        query=query
     )
+
+@app.route("/new_comment", methods=["POST"])
+def new_comment():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    content = request.form.get("content", "").strip()
+    video_link_id = request.form.get("video_link_id", type=int)
+
+    if not video_link_id:
+        abort(400)
+
+    link = db.query(
+        "SELECT id FROM video_links WHERE id = ?",
+        [video_link_id]
+    )
+
+    if not link:
+        abort(404)
+
+    if content and len(content) <= 1000:
+        comments.add_comment(
+            content,
+            session["user_id"],
+            video_link_id
+        )
+
+    return redirect("/link/" + str(video_link_id))

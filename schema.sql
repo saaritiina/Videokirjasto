@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS video_links;
 DROP TABLE IF EXISTS classes;
 DROP TABLE IF EXISTS video_link_classes;
+DROP TABLE IF EXISTS comments;
 
 
 CREATE TABLE users (
@@ -34,4 +35,12 @@ CREATE TABLE video_link_classes (
     PRIMARY KEY (video_link_id, class_id),
     FOREIGN KEY (video_link_id) REFERENCES video_links(id) ON DELETE CASCADE,
     FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
+);
+
+CREATE TABLE comments (
+    id INTEGER PRIMARY KEY,
+    content TEXT NOT NULL,
+    sent_at TEXT NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    video_link_id INTEGER NOT NULL REFERENCES video_links(id)
 );

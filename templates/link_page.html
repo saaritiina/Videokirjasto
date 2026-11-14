@@ -41,6 +41,39 @@
     {% else %}
         <p>Linkille ei ole lisätty luokkia.</p>
     {% endif %}
+    
+    <h2>Kommentit</h2>
+
+    <form action="/new_comment" method="post">
+        <p>
+            <label for="content">Kirjoita kommentti:</label><br>
+            <textarea
+                id="content"
+                name="content"
+                rows="5"
+                cols="40"
+                maxlength="1000"
+                required></textarea>
+        </p>
+
+        <input
+            type="hidden"
+            name="video_link_id"
+            value="{{ link['id'] }}">
+
+        <button type="submit">Lähetä kommentti</button>
+    </form>
+
+    {% for comment in comments %}
+        <article>
+            <p>{{ comment["username"] }} ({{ comment["sent_at"] }}):</p>
+            <p>{{ comment["content"] }}</p>
+        </article>
+        <hr>
+    {% else %}
+        <p>Ei vielä kommentteja.</p>
+    {% endfor %}
+
     <p>
         <a class="button" href="/links">Takaisin videolinkkeihin</a>
     </p>

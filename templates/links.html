@@ -8,6 +8,17 @@
     {% include "navigation.html" %}
     <h1>Kaikki videolinkit:</h1>
 
+    <form action="/links" method="get">
+        <label for="query">Hae videolinkkejä:</label>
+        <input
+            type="text"
+            id="query"
+            name="query"
+            value="{{ query }}"
+            placeholder="Nimi, YouTube-linkki tai luokka">
+        <button type="submit">Hae</button>
+    </form>
+
     {% for link in links %}
     <h3><a href="/link/{{ link['id'] }}">{{ link["title"] }}</a></h3>
     <p>
@@ -22,6 +33,12 @@
         <a href="/edit_link/{{ link['id'] }}">Muokkaa</a>
     {% endif %}
     <hr>
+    {% else %}
+        {% if query %}
+            <p>Haulla “{{ query }}” ei löytynyt videolinkkejä.</p>
+        {% else %}
+            <p>Videolinkkejä ei ole vielä lisätty.</p>
+        {% endif %}
     {% endfor %}
 </body>
 </html>
