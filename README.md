@@ -7,11 +7,11 @@ tietokantaa käyttävä web-sovellus.
 Sovelluksen käyttönotto:
 1. Kloonaa repo
 2. Suorita:
-cd Videokirjasto
-python3 -m venv venv
-source venv/bin/activate
-pip install flask
-sqlite3 database.db < schema.sql
+cd Videokirjasto,
+python3 -m venv venv,
+source venv/bin/activate,
+pip install flask,
+sqlite3 database.db < schema.sql,
 flask run
 3. Mene "Running on" -sivustolle.
 
