@@ -2,7 +2,8 @@
 Videokirjastosovellukseen pystyy lisäämään YouTube-videon linkin ja sille haluamansa nimen. Käyttäjät voivat lisätä kommentteja muiden käyttäjien lisäämiin videolinkkeihin.
 (Sovellus on toteutettu "Tietokannat ja web-ohjelmointi" -opintojaksolla itsenäisenä kurssityönä.)
 
-# Ohjeet käyttöönottoon:
+# Ohjeet käyttöönottoa varten:
+
 1. Kloonaa repo
 2. Suorita:
 cd Videokirjasto,
